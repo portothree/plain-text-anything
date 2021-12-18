@@ -15,9 +15,6 @@ async function main() {
 	const today = dateStringToNumber(new Date().toLocaleDateString());
 	const cards = await parser('./main.dat');
 
-	console.log(cards);
-	return;
-
 	// Filter out cards with due date greater than today
 	// and create new records after review
 	const records = cards
