@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "dayjs": "^1.10.7",
     "sp-repetition": "^2.0.0"
   }
 }

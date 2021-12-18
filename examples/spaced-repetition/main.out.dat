@@ -1,0 +1,4 @@
+2021-12-04
+	P: 2
+	Q: What is an Ingress?
+	A: An API object that manages external access to the services in a cluster, typically HTTP.
