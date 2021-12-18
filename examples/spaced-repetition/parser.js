@@ -1,47 +1,34 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as url from 'url';
-import * as readline from 'readline';
+import Parsimmon from 'parsimmon';
 
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
+const PTA = Parsimmon.createLanguage({
+	// Main entry point of the parser
+	value: (r) =>
+		Parsimmon.alt(r._ident, r.dueDate, r.progress, r.question, r.answer),
+
+	_ident: () => Parsimmon.string('	').times(1),
+
+	// Actual PTA values
+	dueDate: () => Parsimmon.regexp(/2021-11-30/).desc('Due date'),
+	progress: () => Parsimmon.string('P: 1'),
+	question: () => Parsimmon.string('Q: '),
+	answer: () => Parsimmon.string('A: '),
+});
 
 export default async function parser(plainTextPath) {
 	if (!plainTextPath) {
 		throw new Error('Path to plain text not provided.');
 	}
 
-	const fileStream = fs.createReadStream(path.join(__dirname, plainTextPath));
+	const text = await fs.promises.readFile(
+		path.join(__dirname, plainTextPath),
+		'utf-8'
+	);
 
-	const rl = readline.createInterface({
-		input: fileStream,
-		crlfDelay: Infinity,
-	});
+	console.log(PTA);
 
-	const matchMapper = {
-		'k ': 'metadata',
-		'2021-11-30': 'dueDate',
-		'P: ': 'progress',
-		'Q: ': 'question',
-		'A: ': 'answer',
-	};
-
-	return (async () => {
-		const data = {
-			metadata: null,
-			dueDate: null,
-			progress: null,
-			question: null,
-			answer: null,
-		};
-
-		for await (const line of rl) {
-			Object.entries(matchMapper).forEach(([key, value]) => {
-				if (line.match(key)) {
-					data[value] = line;
-				}
-			});
-		}
-
-		return [data];
-	})();
+	return PTA.value.tryParse(text);
 }
