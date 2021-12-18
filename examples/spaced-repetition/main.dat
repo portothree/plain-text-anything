@@ -1,7 +1,5 @@
-k Q ; Question
-k A ; Answer
-
-2021-11-30	DevOps:Kubernetes
+2021-11-30
+	P: 3
 	Q: What is an Ingress?
 	A: An API object that manages external access to the services in a cluster, typically HTTP.
 

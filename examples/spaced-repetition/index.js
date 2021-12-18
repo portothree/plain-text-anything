@@ -4,11 +4,21 @@ import parser from './parser.js';
 const DAY_IN_MS = 24 * 60 * 60 * 1000;
 
 async function main() {
-	try {
-		const data = await parser('./main.dat');
-	} catch (error) {
-		console.log(error);
-	}
+	const cards = await parser('./main.dat');
+
+	cards.forEach((card) => {
+		const progress = Number(card.progress.replace('P: ', ''));
+		const dueDate = Math.round(
+			new Date(card.dueDate).getTime() / DAY_IN_MS
+		);
+		const record = new Record(
+			progress,
+			dueDate,
+			[1, 4, 8, 17],
+			[-3, -1, 1]
+		);
+		record.review(1);
+	});
 }
 
-main();
+main().catch(console.log);

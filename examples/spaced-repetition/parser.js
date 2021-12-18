@@ -17,18 +17,31 @@ export default async function parser(plainTextPath) {
 		crlfDelay: Infinity,
 	});
 
+	const matchMapper = {
+		'k ': 'metadata',
+		'2021-11-30': 'dueDate',
+		'P: ': 'progress',
+		'Q: ': 'question',
+		'A: ': 'answer',
+	};
+
 	return (async () => {
 		const data = {
-			metadata: [],
+			metadata: null,
+			dueDate: null,
+			progress: null,
+			question: null,
+			answer: null,
 		};
 
 		for await (const line of rl) {
-			// Special keyword `k` found
-			if (line.startsWith('k ')) {
-				data.metadata.push(line);
-			}
+			Object.entries(matchMapper).forEach(([key, value]) => {
+				if (line.match(key)) {
+					data[value] = line;
+				}
+			});
 		}
 
-		return data;
+		return [data];
 	})();
 }
